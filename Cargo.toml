@@ -8,18 +8,40 @@ build  	= "build.rs"
 members = ["helper","lib_mmap","lib_embed"]
 
 [[bin]]
-name	= "dummy_bin"
-path	= "src/dummy.bin.rs"
+name	= "data_parser"
+path	= "src/data_parser.bin.rs"
 
 [dependencies]
-helper   	= {path="helper"}
-log      	= "0.4"
-stderrlog	= "0.5"
-anyhow   	= "1.0"
-faccess  	= "0.2"
+helper       	= {path="helper"}
+log          	= "0.4"
+stderrlog    	= "0.5"
+thiserror    	= "1.0.48"
+anyhow       	= "1.0"
+faccess      	= "0.2"
+fancy-regex  	= "0.11.0"
+widestring   	= "1.0.2"
+phf          	= {version="0.11",features=["macros"]} # generate Rust source for PHF data structures at compile time
+phf_codegen  	= "0.11.1"
+indexmap     	= "2.0.0"
+rkyv         	= {version="0.7.42",features=["validation"]}
+rkyv_wrappers	= {git="https://github.com/rkyv/rkyv_contrib",version="0.1.0"}
+seahash      	= "4.1.0"
+memmap2      	= "0.7.1"
+mmap-sync    	= "1.0.1"
+aho-corasick 	= "1.1.0"
+chrono       	= "0.4.31"
+
+# [dependencies.windows]
+# version 	= "0.48"
+# features	= [
+#   "Win32_Foundation",
+#   "Win32_UI_WindowsAndMessaging",
+#   "Win32_UI_Input_KeyboardAndMouse", # active window
+# ]
 
 [build-dependencies]
-log	= "0.4"
+helper	= {path="helper"}
+log   	= "0.4"
 
 [patch.crates-io]
 mmap-sync	= {git="https://github.com/eugenesvk/mmap-sync",branch="win"}
