@@ -141,6 +141,19 @@ fn codegen_win32const_db() -> Result<(), Error> {
 // }
 
 fn main() {
+  // ziggle_clean(); // generate a cleaned up key/value (from value/key) database
+  // win32const_save_rkyv_mmap();
+  // win32const_check_rkyv_mmap();
+
+  // parser::parse_ziggle();
+  // key2bit  for (key, value) in win32_const {
+    // phf_win32_const.entry(key, &format!("{:?}",value));
+  // }
+  // let test_key = win32_const["__RPCNDR_H_VERSION__"];
+  // let test_key = "__RPCNDR_H_VERSION__";
+  // println!("Hello, world! libret42{} libadd{} libadd_ext{} libret42_ext{} test_key{}"
+   // ,                      libret42  ,libadd   ,libadd_ext  ,libret42_ext ,test_key);
+
   // codegen_win32const(); // generates win32const_codegen.rs
 
   // codegen_win32const_test();
