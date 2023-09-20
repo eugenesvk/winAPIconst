@@ -1,21 +1,15 @@
 [package]  # help on keys doc.rust-lang.org/cargo/reference/manifest.html
-name   	= "dummy"
+name   	= "win_api_const"
 version	= "0.1.0"
-authors	= ["{{authors}}"]
 edition	= "2021"
 build  	= "build.rs"
 
-[workspace]
-members = ["helper"]	# relative to the workspace root
+[workspace] # relative to the workspace root
+members = ["helper","lib_mmap","lib_embed"]
 
 [[bin]]
 name	= "dummy_bin"
 path	= "src/dummy.bin.rs"
-
-[lib]
-name      	= "dummy_lib"
-path      	= "src/dummy.lib.rs"
-crate-type	= ['lib','cdylib']
 
 [dependencies]
 helper   	= {path="helper"}
@@ -26,6 +20,9 @@ faccess  	= "0.2"
 
 [build-dependencies]
 log	= "0.4"
+
+[patch.crates-io]
+mmap-sync	= {git="https://github.com/eugenesvk/mmap-sync",branch="win"}
 
 [profile.release]
 # opt        	for      	size
