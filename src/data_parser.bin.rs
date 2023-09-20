@@ -4,6 +4,8 @@ use helper        	::*; // gets macros
 use helper::alias 	::*;
 use helper::helper	::*;
 
+pub mod win_api_const_dump;
+use win_api_const_dump::{win32const_save_rkyv_mmap,ziggle_clean,win32const_check_rkyv_mmap,Win32const};
 
 use std      	::env;
 use std::fs  	::File;
