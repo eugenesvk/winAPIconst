@@ -63,12 +63,12 @@ fn get_win32_const(pre:&WideChar,s:&WideChar, err_sz:u32,err_ptr:*mut WideChar) 
   let pre_w	:&Utf16Str = match Utf16Str::from_ustr(pre_wx){Ok(s)=>s, Err(_e)=>return ret_error(err_utf16,err_sz,err_ptr)};
   let s_w  	:&Utf16Str = match Utf16Str::from_ustr(s_wx  ){Ok(s)=>s, Err(_e)=>return ret_error(err_utf16,err_sz,err_ptr)};
   // Convert to UTF8
-  let pre_s	:String = pre_w.to_string(); // since it's valid UTF16, conversion is lossless and non-fallible
-  let s_s  	:String = s_w  .to_string();
-  let sep  	= match pre_s=="" {true=>"",false=>"_"};
+  let pre_s  	:String = pre_w.to_string(); // since it's valid UTF16, conversion is lossless and non-fallible
+  let s_s    	:String = s_w  .to_string();
   // Find key
-  let keys:[&str; 2] = [&(pre_s.clone() + sep + &s_s) // search the original 1st
-    ,                   &(pre_s               + &s_s).to_ascii_lowercase()]; // search lowercase (with all subs)
+  let keys:[&str; 3] = [&(pre_s.clone()       + &s_s) // search the original 1st
+   ,                    &(pre_s.clone() + "_" + &s_s) // then with a _
+   ,                    &(pre_s               + &s_s).to_ascii_lowercase()]; // search lowercase (with all subs)
   for k in keys {
     if let Some(val) = data.hash_map_vec.get(k) { // Access fields of the struct
       if let Ok(val_w16cs) = U16CString::from_str(val)	{return val_w16cs.into_raw()
