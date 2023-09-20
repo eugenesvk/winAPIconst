@@ -1,0 +1,18 @@
+[package]
+name       	= "win_api_const_embed"
+description	= "Libray to read win API constants from an embedded database"
+version    	= "0.1.0"
+edition    	= "2021"
+license    	= "MIT"
+
+[lib]
+name      	= "winAPIconst_embed"
+path      	= "src/lib_embed.rs"
+crate-type	= ["cdylib"]
+
+[dependencies]
+# win_api_const	= {path="../../win_api_const"}
+widestring     	= "1.0.2"
+mmap-sync      	= "1.0.1"
+rkyv           	= {version="0.7.42",features=["validation"]}
+rkyv_wrappers  	= {git="https://github.com/rkyv/rkyv_contrib",version="0.1.0"}
