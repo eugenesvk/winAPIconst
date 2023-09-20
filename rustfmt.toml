@@ -1,0 +1,22 @@
+# Version 0.1
+report_todo                 	= "Always"
+report_fixme                	= "Always"
+use_try_shorthand           	= true
+brace_style                 	= "PreferSameLine"
+comment_width               	= 100
+enum_discrim_align_threshold	= 10
+format_strings              	= true
+fn_args_density             	= "Compressed"
+fn_single_line              	= true
+imports_indent              	= "Visual"
+match_block_trailing_comma  	= true
+normalize_doc_attributes    	= true
+overflow_delimited_expr     	= true
+reorder_impl_items          	= true
+struct_field_align_threshold	= 10
+use_field_init_shorthand    	= true
+use_small_heuristics        	= "Max"
+where_single_line           	= true
+wrap_comments               	= false
+normalize_comments          	= false 	# use /* multiline comments */
+#write_mode                 	= "Diff"	# Used for debugging rustfmt configurations

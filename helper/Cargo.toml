@@ -1,0 +1,12 @@
+[package]
+name       	= "helper"
+description	= "Helper functions that can be shared between the main crate as well as the build script"
+version    	= "0.1.0"
+edition    	= "2021"
+license    	= "MIT"
+
+[dependencies]
+# bitflags  	= "2.3.3"
+# indexmap    	= "2.0.0"
+# aho-corasick	= "1.0.5"
+# chrono      	= "0.4.31"
