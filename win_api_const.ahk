@@ -18,10 +18,9 @@ get_winAPI_Const_dll()
 get_winAPI_Const_dll() {
   winAPI	:= winAPIconst_loader.load('embed')
   cC    	:= winAPI.getKey_Any   .Bind(winAPI) ; get any key like '__WARNING_POSTCONDITION_NULLTERMINATION_VIOLATION'
-  cLoc  	:= winAPI.getKey_Locale.Bind(winAPI)
   cCLS  	:= winAPI.getKey_CLSID .Bind(winAPI) ; get 'ActiveDesktop' without a 'CLSID_' prefix
   cIID  	:= winAPI.getKey_IID   .Bind(winAPI) ; get 'ActiveDesktop' without a 'IID_I'  prefix
-  cLoc  	:= winAPI.getKey_Locale.Bind(winAPI)
+  cLoc  	:= winAPI.getKey_Locale.Bind(winAPI) ; get 'ActiveDesktop' without a 'CLSID_' prefix
 
   DllCall("QueryPerformanceFrequency", "Int64*", &freq:=0)
   DllCall("QueryPerformanceCounter"  , "Int64*", &CounterBefore:=0)
