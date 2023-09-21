@@ -48,7 +48,7 @@ get_winAPI_Const_dll() {
     AD := ComObject(CLSID_ActiveDesktop, IID_IActiveDesktop)
     ComCall(GetWallpaper, AD, "ptr",wszWallpaper, "uint",cchWallpaper, "uint",AD_GETWP_LAST_APPLIED)
 
-  ; 2.2b Dynamic calls are even more ergonomic to write, but ~10 slower (though still ~ms)
+  ; 2.2b Dynamic calls are even more ergonomic to write (only ~30% slower, still tiny ~ms)
     ; AD := ComObject(cCLS(key), cIID(key))
     ; ComCall(GetWallpaper, AD, "ptr",wszWallpaper, "uint",cchWallpaper, "uint",cC("AD_GETWP_LAST_APPLIED"))
 
