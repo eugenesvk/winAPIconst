@@ -10,7 +10,7 @@ use std::io  	::{self,prelude::*,BufRead,BufWriter};
 use std::path	::{self,Path,PathBuf};
 
 pub const ziggle_src	:&str	= "./data/ziggle.txt";
-pub const MMAP_PATH: &str = "./data/winAPI_Const.rkyv";
+pub const MMAP_PATH 	:&str = "./data/winAPI_Const.rkyv";
 
 pub fn buff_write_kv<W: Write>(b:&mut W,key:&str,val:&str) {
   b.write(key.as_bytes()).unwrap();b.write(tab).unwrap();b.write(val.as_bytes()).unwrap();b.write(nl).unwrap();
