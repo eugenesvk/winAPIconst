@@ -12,11 +12,11 @@ use std::fs  	::File;
 use std::io  	::{BufWriter, Write};
 use std::path	::Path;
 
-pub const win32const_codegen	:&str	= "./data/win32const_codegen.rs";
+pub const win32const_codegen_p	:&str	= "./data/win32const_codegen.rs";
 
 use chrono::prelude::*;
 fn codegen_win32const() { // generate win32const_codegen.rs file with hashmap to be embedded
-  let     path	= Path     ::new(win32const_codegen);
+  let     path	= Path     ::new(win32const_codegen_p);
   if path.is_file() {
     p!("skiping existing file ={:?}",&path.as_os_str());
     return
