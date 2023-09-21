@@ -1,6 +1,6 @@
 /*! Get a Windows API constant value from a memory-mapped file (not included)
 
-See win_api_const_mmap.ahk for an example on how to use in AutoHotkey
+See win_api_const.ahk for an example on how to use in AutoHotkey
 */
 
 use std::ffi::CString;
