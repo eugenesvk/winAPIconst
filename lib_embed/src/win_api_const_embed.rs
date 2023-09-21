@@ -39,9 +39,10 @@ fn get_win32_const(pre:&WideChar,s:&WideChar, err_sz:u32,err_ptr:*mut WideChar) 
   let pre_s  	:String = pre_w.to_string(); // since it's valid UTF16, conversion is lossless and non-fallible
   let s_s    	:String = s_w  .to_string();
   // Find key
-  let keys:[&str; 3] = [&(pre_s.clone()       + &s_s) // search the original 1st
+  let keys:[&str; 4] = [&(pre_s.clone()       + &s_s) // search the original 1st
    ,                    &(pre_s.clone() + "_" + &s_s) // then with a _
-   ,                    &(pre_s               + &s_s).to_ascii_lowercase()]; // search lowercase (with all subs)
+   ,                    &(pre_s.clone() + " " + &s_s).to_ascii_lowercase() // search lowercase (with all subs)
+   ,                    &(pre_s               + &s_s).to_ascii_lowercase()];
   for k in keys {
     if let Some(val) = win32_const.get(k) {
       if let Ok(val_w16cs) = U16CString::from_str(val)	{return val_w16cs.into_raw()
