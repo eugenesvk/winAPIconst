@@ -740,6 +740,7 @@ name = "win_api_const_embed"
 version = "0.1.0"
 dependencies = [
  "mmap-sync",
+ "phf",
  "rkyv",
  "rkyv_wrappers",
  "widestring",
