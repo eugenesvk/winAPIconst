@@ -6,6 +6,8 @@ use helper::helper	::*;
 use helper::parser	::*;
 use helper::fs    	::*;
 
+use chrono::prelude::*;
+
 use rkyv::{
   collections::hash_map::{ArchivedHashMap, HashMapResolver},
   with::{ArchiveWith, DeserializeWith, SerializeWith},
@@ -113,10 +115,17 @@ pub fn ziggle_clean() {
   file_log_buff.write(nl).unwrap();
   // for i in 0..10 {file_out_buff.write("\t".as_bytes()).unwrap();}
 
+  let mut ist:i32 = 0;
+  let log_at_count = 10000 ;
+  let mut is_data_start	= false;
   if let Ok(lines) = read_lines(ziggle_src) {
-    for line in lines { // consumes iterator, returns an (Optional) String
-      if let Ok(val_tab_key) = line {	// 773	WM_RENDERFORMAT
-        if let Some(val_key) = val_tab_key.split_once('\t') {
+    for line_maybe in lines { // consumes iterator, returns an (Optional) String
+      ist += 1;
+      if (ist % log_at_count) == 0 {p!("status report: read line # {} @ {}",ist,Utc::now())}
+      if let Ok(line) = line_maybe {	//val⭾key: 773	WM_RENDERFORMAT
+        if line.starts_with(parser::data_start_marker) { is_data_start = true; p!("status report: found data marker ‘{}’ line # {} @ {}",data_start_marker,ist,Utc::now());}
+        if !is_data_start { continue; }
+        if let Some(val_key) = line.split_once('\t') {
           let (key,mut val)	= (val_key.1.to_string(),val_key.0.to_string()); //WM_RENDERFORMAT 773
           match get_wrapped_val(&val) {
             Ok (s)	=> {val = s},

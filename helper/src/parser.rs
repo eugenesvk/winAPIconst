@@ -9,8 +9,9 @@ use std::fs  	::File;
 use std::io  	::{self,prelude::*,BufRead,BufWriter};
 use std::path	::{self,Path,PathBuf};
 
-pub const ziggle_src	:&str	= "./data/ziggle.txt";
-pub const MMAP_PATH 	:&str = "./data/winAPI_Const.rkyv";
+pub const ziggle_src       	:&str	= "./data/ziggle.txt";
+pub const data_start_marker	:&str	= ".data.";
+pub const MMAP_PATH        	:&str	= "./data/winAPI_Const.rkyv";
 
 pub fn buff_write_kv<W: Write>(b:&mut W,key:&str,val:&str) {
   b.write(key.as_bytes()).unwrap();b.write(tab).unwrap();b.write(val.as_bytes()).unwrap();b.write(nl).unwrap();
@@ -82,12 +83,15 @@ pub fn parse_ziggle_vec() -> Result<Vec<(String,String)>,Box<dyn std::error::Err
   file_log_buff.write("Removed duplicate key/value pairs".as_bytes()).unwrap();
   file_log_buff.write(nl).unwrap();
 
+  let mut is_data_start	= false;
   if let Ok(lines) = read_lines(path_clean) {
-    for line in lines { // consumes iterator, returns an (Optional) String
+    for line_maybe in lines { // consumes iterator, returns an (Optional) String
       ist += 1;
-      if (ist % log_at_count) == 0 {p!("read line # {} @ {}",ist,Utc::now())}
-      if let Ok(val_tab_key) = line {	// WM_RENDERFORMAT 773
-        if let Some(val_key) = val_tab_key.split_once('\t') {
+      if (ist % log_at_count) == 0 {p!("status report: read line # {} @ {}",ist,Utc::now())}
+      if let Ok(line) = line_maybe {	// WM_RENDERFORMAT 773
+        if line.starts_with(data_start_marker) { is_data_start = true; p!("status report: found data marker ‘{}’ line # {} @ {}",data_start_marker,ist,Utc::now());}
+        if !is_data_start { continue; }
+        if let Some(val_key) = line.split_once('\t') {
           let (mut key,val)	= (val_key.0.to_string(),val_key.1.to_string()); //WM_RENDERFORMAT 773
           let mut keys     	= vec![key.clone()]; // push original WM_RENDERFORMAT
           let key_upd      	= repl_ac.replace_all(&key, repl_with).to_ascii_lowercase();
