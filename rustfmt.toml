@@ -20,3 +20,4 @@ where_single_line           	= true
 wrap_comments               	= false
 normalize_comments          	= false 	# use /* multiline comments */
 #write_mode                 	= "Diff"	# Used for debugging rustfmt configurations
+tab_spaces                  	= 2     	#
