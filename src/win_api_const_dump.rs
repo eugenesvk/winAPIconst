@@ -149,7 +149,7 @@ pub fn win32const_save_rkyv_mmap() { // Write
   let ziggle_vec	= parse_ziggle_vec().unwrap();
   let data      	= Win32const{hash_map_vec:ziggle_vec};
   p!("starting writing data to an mmaped file...");
-  let mut synchronizer = Synchronizer::new(MMAP_PATH); // Initialize the Synchronizer
+  let mut synchronizer = Synchronizer::new(MMAP_PATH.as_ref()); // Initialize the Synchronizer
   let (written, reset) = synchronizer.write(&data, Duration::from_secs(1)).expect("failed to write data");
   p!("written: {} bytes | reset: {}", written, reset); // Show how many bytes written and whether state was reset
 }
@@ -158,8 +158,8 @@ pub fn win32const_check_rkyv_mmap() { // Read & verify
   let repl_src  = &["LOCALE_"	,"ENGLISH"	,"_"	,"HEADER"	,"DEFAULT"	,"CODEPAGE"	,"NUMBER"	,"NAME"	,"LANGUAGE"	,"WINDOWS"	];
   let repl_with = &[""       	,"En"     	," "	,"Hd"    	,"Def"    	,"CPg"     	,"Num"   	,"Nm"  	,"Lng"     	,"Win"    	];
   let repl_ac = AhoCorasick::new(repl_src).unwrap();
-  let mut synchronizer = Synchronizer::new(MMAP_PATH); // Initialize the Synchronizer
-  let data = unsafe { synchronizer.read::<Win32const>() }.expect("failed to read data"); // Read data from shared memory
+  let mut synchronizer = Synchronizer::new(MMAP_PATH.as_ref()); // Initialize the Synchronizer
+  let data = unsafe { synchronizer.read::<Win32const>(true) }.expect("failed to read data"); // Read data from shared memory
   for k in vec!["IID_IEventTrigger","LOCALE_SENGCOUNTRY","LOCALE_SENGLISHCOUNTRYNAME",
     "SEnCOUNTRYNm",
     "DISPID_SCROLLBARS",
