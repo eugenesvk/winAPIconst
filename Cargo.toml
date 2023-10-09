@@ -27,7 +27,7 @@ rkyv         	= {version="0.7.42",features=["validation"]}
 rkyv_wrappers	= {git="https://github.com/rkyv/rkyv_contrib",version="0.1.0"}
 seahash      	= "4.1.0"
 memmap2      	= "0.7.1"
-mmap-sync    	= "1.0.1"
+mmap-sync    	= "1.0.2"
 aho-corasick 	= "1.1.0"
 chrono       	= "0.4.31"
 
@@ -42,9 +42,6 @@ chrono       	= "0.4.31"
 [build-dependencies]
 helper	= {path="helper"}
 log   	= "0.4"
-
-[patch.crates-io]
-mmap-sync	= {git="https://github.com/eugenesvk/mmap-sync",branch="win"}
 
 [profile.release]
 # opt        	for      	size
