@@ -142,15 +142,17 @@ fn codegen_win32const_test() {
 #[derive(Debug)] pub enum ConstFrom {Ziggle,WinMD,}
 
 fn main() {
+  let c_win_md:&Path	= Path::new("./data/winConst_bindgen_All_185k_dedupe");
   let args:Vec<String> = std::env::args().skip(1).collect();
   if        let Some(pos) = args.iter().position(|x| *x == "ziggle_clean") {
     ziggle_clean(); // generate a cleaned up key/value (from value/key) database
+  } else if let Some(pos) = args.iter().position(|x| *x == "gen_winmd") {
+    codegen_win32const(ConstFrom::WinMD,&c_win_md); // 1 WinMD → win32const_codegen.rs (embed)
+  } else if let Some(pos) = args.iter().position(|x| *x == "rkyv_save_winmd") {
+    win32const_save_rkyv_mmap(ConstFrom::WinMD,&c_win_md); // 2 WinMD → rkyv file (mmap)
   } else if let Some(pos) = args.iter().position(|x| *x == "rkyv_save_ziggle") {
     let db_p:&Path	= Path::new("");
     win32const_save_rkyv_mmap(ConstFrom::Ziggle,&db_p);
-  } else if let Some(pos) = args.iter().position(|x| *x == "rkyv_save_winmd") {
-    let db_p:&Path	= Path::new("./data/winConst_bindgen_All_185k_dedupe");
-    win32const_save_rkyv_mmap(ConstFrom::WinMD,&db_p);
   } else if let Some(pos) = args.iter().position(|x| *x == "rkyv_check") {
     win32const_check_rkyv_mmap();
   } else if let Some(pos) = args.iter().position(|x| *x == "ziggle_parse") {
@@ -162,8 +164,9 @@ fn main() {
     // let test_key = "__RPCNDR_H_VERSION__";
     // println!("Hello, world! libret42{} libadd{} libadd_ext{} libret42_ext{} test_key{}"
      // ,                      libret42  ,libadd   ,libadd_ext  ,libret42_ext ,test_key);
-  } else if let Some(pos) = args.iter().position(|x| *x == "gen") {
-    codegen_win32const(); // generates win32const_codegen.rs
+  } else if let Some(pos) = args.iter().position(|x| *x == "gen_ziggle") {
+    let db_p:&Path	= Path::new("");
+    codegen_win32const(ConstFrom::Ziggle,&db_p); // generates win32const_codegen.rs
   } else if let Some(pos) = args.iter().position(|x| *x == "gen_test") {
     codegen_win32const_test();
   } else if let Some(pos) = args.iter().position(|x| *x == "gen_db") {
