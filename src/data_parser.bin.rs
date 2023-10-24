@@ -15,29 +15,28 @@ use std::path	::Path;
 pub const win32const_codegen_p	:&str	= "./data/win32const_codegen.rs";
 
 use chrono::prelude::*;
-fn codegen_win32const() { // generate win32const_codegen.rs file with hashmap to be embedded
+fn codegen_win32const(src:ConstFrom,src_p:&Path) { // generate win32const_codegen.rs file with hashmap to be embedded
   let     path	= Path     ::new(win32const_codegen_p);
-  if path.is_file() {
-    p!("skiping existing file ={:?}",&path.as_os_str());
-    return
-  }
-  p!("writing to path={:?}",&path.as_os_str());
+  if path.is_file() {p!("skiping existing file ={:?}",&path.as_os_str());return}
+  p!("Writing to path ‘{:?}’",&path.as_os_str());
   let mut file	= BufWriter::new(File::create(&path).unwrap());
 
   // let win32_const = parser::parse_ziggle();
-  let ziggle_vec	= parser::parse_ziggle_vec().unwrap();
+  let const_vec = match src {
+    ConstFrom::Ziggle	=> parser::parse_ziggle_vec()           .unwrap(),
+    ConstFrom::WinMD 	=> parser::convert_const_csv2vec(&src_p).unwrap(),
+  };
 
   let mut phf_win32_const = phf_codegen::Map::new();
   let mut ist:i32 = 0;
   let log_at_count = 10000 ;
-  for key_val in ziggle_vec {
+  for key_val in const_vec {
     ist += 1;
     if (ist % log_at_count) == 0 {p!("parsed line # {} @ {}",ist,Utc::now())}
     let (key,val)	= (key_val.0,key_val.1); //WM_RENDERFORMAT 773
     phf_win32_const.entry(key, &format!("{:?}",val)); // "quote" manually since values are added literally
   }
-  write!(&mut file, "static win32_const: phf::Map<&'static str, &'static str> = {}", phf_win32_const.build())
-    .unwrap();
+  write!(&mut file, "static win32_const: phf::Map<&'static str, &'static str> = {}", phf_win32_const.build()).unwrap();
   write!(&mut file, ";\n").unwrap();
 }
 
