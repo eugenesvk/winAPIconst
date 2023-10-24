@@ -36,16 +36,16 @@ get_winAPI_Const_dll() {
   ; 2.1 Old method with manually inserted constant values
     ; static AD_GETWP_LAST_APPLIED	:= 0x00000002
     ; , CLSID_ActiveDesktop       	:= "{75048700-EF1F-11D0-9888-006097DEACF9}"
-    ; , IID_IActiveDesktop        	:= "{F490EB00-1240-11D1-9888-006097DEACF9}"
-    ; AD := ComObject(CLSID_ActiveDesktop, IID_IActiveDesktop)
+    ; , IID_IActiveDesktopP       	:= "{52502ee0-ec80-11d0-89ab-00c04fc2972d}"
+    ; AD := ComObject(CLSID_ActiveDesktop, IID_IActiveDesktopP)
     ; ComCall(GetWallpaper, AD, "ptr",wszWallpaper, "uint",cchWallpaper, "uint",AD_GETWP_LAST_APPLIED)
 
   ; 2.2a New method with dynamic lookup of constant values (just as fast with static variables)
     static key := 'ActiveDesktop'
     , CLSID_ActiveDesktop  	:= cCLS(key)
-    , IID_IActiveDesktop   	:= cIID(key)
+    , IID_IActiveDesktopP  	:= cIID(key)
     , AD_GETWP_LAST_APPLIED	:= cC('AD_GETWP_LAST_APPLIED')
-    AD := ComObject(CLSID_ActiveDesktop, IID_IActiveDesktop)
+    AD := ComObject(CLSID_ActiveDesktop, IID_IActiveDesktopP)
     ComCall(GetWallpaper, AD, "ptr",wszWallpaper, "uint",cchWallpaper, "uint",AD_GETWP_LAST_APPLIED)
 
   ; 2.2b Dynamic calls are even more ergonomic to write (only ~30% slower, still tiny ~ms)
