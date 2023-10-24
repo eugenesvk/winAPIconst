@@ -50,8 +50,9 @@ fn get_win32_const(pre:&WideChar,s:&WideChar, err_sz:u32,err_ptr:*mut WideChar) 
     Ok(file)	=> file,
     Err(_e)  	=> return ret_error(u16cstr!("✗ No database!"),err_sz,err_ptr)};
   // let mut synchronizer = Synchronizer::new(db_path.as_os_str()); // TODO: make it accept OsStr
-  let mut synchronizer = Synchronizer::new(&db_path.to_string_lossy()); // Initialize the Synchronizer
-  let data = match unsafe { synchronizer.read::<Win32const>() } { // Read data from shared memory
+  let mut synchronizer = Synchronizer::new(&db_path.into_os_string()); // Initialize the Synchronizer
+  let check_bytes = false; // (faster not to) check that entity bytes can be safely read for type T
+  let data = match unsafe { synchronizer.read::<Win32const>(check_bytes) } { // Read data from shared memory
     Ok(mmf)	=> mmf,
     Err(_e)	=> return ret_error(u16cstr!("✗ Failed to read data!"),err_sz,err_ptr)};
 
