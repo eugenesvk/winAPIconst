@@ -113,3 +113,53 @@ pub fn parse_ziggle_vec() -> Result<Vec<(String,String)>,Box<dyn std::error::Err
   Ok(win32_const)
 }
 
+
+pub const col_name_nm     	:&str	= "name";
+pub const col_value_nm    	:&str	= "value";
+pub const col_namespace_nm	:&str	= "namespace";
+
+pub fn convert_const_csv2vec(src:&Path) -> Result<Vec<(String,String)>,Box<dyn Error>> { // for rkyv ArchiveHashmap which doesn't benefit from HashMap, but uses an extension to convert Vector to ArchiveHashmap
+  let mut win32_const:Vec<(String,String)>	= Vec::with_capacity(200_000);
+  let mut all_keys   :HashSet<String>     	= HashSet::new(); // for checking dupes, though dupes removed during cleanup, some might appear again after replacements, especially given that some constants have the same name differing only by CaSe
+    // IID_IXMLDOMImplementation
+    // IID_IXmlDomImplementation
+
+  let repl_src  = &["_"	,"ENGLISH"	,"HEADER"	,"DEFAULT"	,"CODEPAGE"	,"NUMBER"	,"NAME"	,"LANGUAGE"	,"WINDOWS"	];
+  let repl_with = &[" "	,"En"     	,"Hd"    	,"Def"    	,"CPg"     	,"Num"   	,"Nm"  	,"Lng"     	,"Win"    	];
+  let repl_ac = AhoCorasick::builder().ascii_case_insensitive(true).build(repl_src).unwrap();
+
+  let mut rdr	= csv::ReaderBuilder::new().has_headers(true).delimiter(b'\t').comment(Some(b'#')).from_path(src)?;
+  let hd = rdr.headers()?.clone();
+  let col_name_i      	= hd.iter().position(|x| x.to_ascii_lowercase() == col_name_nm     ).unwrap();
+  let col_value_i     	= hd.iter().position(|x| x.to_ascii_lowercase() == col_value_nm    ).unwrap();
+  let col_namespace_i_	= hd.iter().position(|x| x.to_ascii_lowercase() == col_namespace_nm);
+  use unescaper::unescape; // required since strings are escaped
+
+  let log_dupe_p = PathBuf::from(MMAP_PATH.to_string() + ".log");
+  // if log_dupe_p.is_file()	{return Err(format!("Aborting, file exists {:?}",log_dupe_p).into())};
+  let file_log = File::create(&log_dupe_p).unwrap();
+  let mut file_log_buff = BufWriter::new(file_log);
+  file_log_buff.write("# Removed duplicate key/value pairs".as_bytes()).unwrap();file_log_buff.write(nl).unwrap();
+
+  let log_at_count = 10000;
+  for (i, res) in rdr.records().enumerate() {
+    if (i % log_at_count) == 0 {p!("status report: read line # {} @ {}",i,Utc::now())}
+    let record = res?;
+    let (key,val)	= (record[col_name_i ].to_string(),unescape(&record[col_value_i])?); //WM_RENDERFORMAT 773
+    let mut keys 	= vec![key.clone()]; // push original WM_RENDERFORMAT
+    let key_upd  	= repl_ac.replace_all(&key,repl_with).to_ascii_lowercase();
+    if key_upd   	!= key {keys.push(key_upd);} // push lowercased sub ‘wm renderformat’
+    for k in keys { // input data should have no dupes, but replacements here may generate new ones
+      if all_keys.contains(&k) { // skip dupes and log
+        buff_write_kv(&mut file_log_buff, &key, &val);
+      } else {
+        all_keys   .insert( k.clone());
+        win32_const.push  ((k        ,val.clone()));
+      }
+    }
+  }
+
+  file_log_buff.flush().unwrap();
+  // assert_eq!(win32_const[0].0	,"__RPCNDR_H_VERSION__");assert_eq!(win32_const[0].1	,"500");
+  Ok(win32_const)
+}
