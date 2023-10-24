@@ -145,10 +145,14 @@ pub fn ziggle_clean() {
 
 use mmap_sync::synchronizer::Synchronizer;
 use std::time::Duration;
-pub fn win32const_save_rkyv_mmap() { // Write
-  let ziggle_vec	= parse_ziggle_vec().unwrap();
-  let data      	= Win32const{hash_map_vec:ziggle_vec};
-  p!("starting writing data to an mmaped file...");
+use crate::ConstFrom;
+pub fn win32const_save_rkyv_mmap(src:ConstFrom,src_p:&Path) { // Write
+  let const_vec = match src {
+    ConstFrom::Ziggle	=> parse_ziggle_vec()           .unwrap(),
+    ConstFrom::WinMD 	=> convert_const_csv2vec(&src_p).unwrap(),
+  };
+  let data	= Win32const{hash_map_vec:const_vec};
+  p!("Starting writing data to an mmaped file...");
   let mut synchronizer = Synchronizer::new(MMAP_PATH.as_ref()); // Initialize the Synchronizer
   let (written, reset) = synchronizer.write(&data, Duration::from_secs(1)).expect("failed to write data");
   p!("written: {} bytes | reset: {}", written, reset); // Show how many bytes written and whether state was reset
