@@ -5,9 +5,10 @@ use crate::fs    	::*;
 
 use indexmap	::{IndexMap, IndexSet};
 
-use std::fs  	::File;
-use std::io  	::{self,prelude::*,BufRead,BufWriter};
-use std::path	::{self,Path,PathBuf};
+use std::fs   	::File;
+use std::io   	::{self,prelude::*,BufRead,BufWriter};
+use std::path 	::{self,Path,PathBuf};
+use std::error	::{Error};
 
 pub const ziggle_src       	:&str	= "./data/ziggle.txt";
 pub const data_start_marker	:&str	= ".data.";
@@ -51,11 +52,11 @@ pub fn get_path_clean_log(src:&str) -> (PathBuf,PathBuf) {
       &ext_in.to_os_string(),
       ]).unwrap();
     path_out.push(&fname_out);
-  let mut path_out_log	= PathBuf::from(&parent);
+  let mut log_dupe_p 	= PathBuf::from(&parent);
     let mut fname_out	= PathBuf::from(&fname_out);
     fname_out.set_extension("log");
-    path_out_log.push(&fname_out);
-  (path_out,path_out_log)
+    log_dupe_p.push(&fname_out);
+  (path_out,log_dupe_p)
 }
 
 use std::collections::HashSet;
@@ -76,11 +77,11 @@ pub fn parse_ziggle_vec() -> Result<Vec<(String,String)>,Box<dyn std::error::Err
   let log_at_count = 10000 ;
   let (path_clean,_) = get_path_clean_log(&ziggle_src);
 
-  let path_out_log = PathBuf::from(MMAP_PATH.to_string() + ".log");
-  if path_out_log.is_file()	{return Err(format!("Aborting, file exists {:?}",path_out_log).into())};
-  let file_log = File::create(&path_out_log).unwrap();
+  let log_dupe_p = PathBuf::from(MMAP_PATH.to_string() + ".log");
+  if log_dupe_p.is_file()	{return Err(format!("Aborting, file exists {:?}",log_dupe_p).into())};
+  let file_log = File::create(&log_dupe_p).unwrap();
   let mut file_log_buff = BufWriter::new(file_log);
-  file_log_buff.write("Removed duplicate key/value pairs".as_bytes()).unwrap();
+  file_log_buff.write("# Removed duplicate key/value pairs".as_bytes()).unwrap();
   file_log_buff.write(nl).unwrap();
 
   let mut is_data_start	= false;
@@ -101,7 +102,7 @@ pub fn parse_ziggle_vec() -> Result<Vec<(String,String)>,Box<dyn std::error::Err
               buff_write_kv(&mut file_log_buff, &key, &val);
             } else {
               all_keys   .insert( k.clone());
-              win32_const.push  ((k,val.clone()));
+              win32_const.push  ((k        ,val.clone()));
             }
           }
         }
