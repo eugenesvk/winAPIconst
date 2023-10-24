@@ -87,7 +87,7 @@ So you could either lookup
 
 ## Known issues
 
-Case-sensitive lookup is not 100% reliable since some Windows constants unfortunately have identical names differing only by CaSe, so they'd have the same lower-case names
+Case-insensitive lookup is not 100% reliable since some Windows constants unfortunately have identical names differing only by CaSe, so they'd have the same lower-case names
 
 ## Credits
 
