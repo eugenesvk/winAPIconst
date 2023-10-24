@@ -135,31 +135,42 @@ fn codegen_win32const_db() -> Result<(), Error> {
 }
 */
 // todo: add windows sys and get constants from there
-// fn codegen_win32const_test() {
-//   use windows::Win32::Globalization::*;
-//   p!("LOCALE_SENGCURRNAME = {:?}",LOCALE_SENGCURRNAME)
-// }
+fn codegen_win32const_test() {
+  // use windows::Win32::Globalization::*;
+  // p!("LOCALE_SENGCURRNAME = {:?}",LOCALE_SENGCURRNAME)
+}
+#[derive(Debug)] pub enum ConstFrom {Ziggle,WinMD,}
 
 fn main() {
-  // ziggle_clean(); // generate a cleaned up key/value (from value/key) database
-  // win32const_save_rkyv_mmap();
-  // win32const_check_rkyv_mmap();
+  let args:Vec<String> = std::env::args().skip(1).collect();
+  if        let Some(pos) = args.iter().position(|x| *x == "ziggle_clean") {
+    ziggle_clean(); // generate a cleaned up key/value (from value/key) database
+  } else if let Some(pos) = args.iter().position(|x| *x == "rkyv_save_ziggle") {
+    let db_p:&Path	= Path::new("");
+    win32const_save_rkyv_mmap(ConstFrom::Ziggle,&db_p);
+  } else if let Some(pos) = args.iter().position(|x| *x == "rkyv_save_winmd") {
+    let db_p:&Path	= Path::new("./data/winConst_bindgen_All_185k_dedupe");
+    win32const_save_rkyv_mmap(ConstFrom::WinMD,&db_p);
+  } else if let Some(pos) = args.iter().position(|x| *x == "rkyv_check") {
+    win32const_check_rkyv_mmap();
+  } else if let Some(pos) = args.iter().position(|x| *x == "ziggle_parse") {
+    // parser::parse_ziggle();
+    // key2bit  for (key, value) in win32_const {
+      // phf_win32_const.entry(key, &format!("{:?}",value));
+    // }
+    // let test_key = win32_const["__RPCNDR_H_VERSION__"];
+    // let test_key = "__RPCNDR_H_VERSION__";
+    // println!("Hello, world! libret42{} libadd{} libadd_ext{} libret42_ext{} test_key{}"
+     // ,                      libret42  ,libadd   ,libadd_ext  ,libret42_ext ,test_key);
+  } else if let Some(pos) = args.iter().position(|x| *x == "gen") {
+    codegen_win32const(); // generates win32const_codegen.rs
+  } else if let Some(pos) = args.iter().position(|x| *x == "gen_test") {
+    codegen_win32const_test();
+  } else if let Some(pos) = args.iter().position(|x| *x == "gen_db") {
+    // match codegen_win32const_db() {
+      // Ok(())	=> p!("redb crated successfully at {:?}",redb_path),
+      // Error 	=> p!("redb FAILED to create db at {:?} due to {:?}",redb_path,Error),
+    // }
+  }
 
-  // parser::parse_ziggle();
-  // key2bit  for (key, value) in win32_const {
-    // phf_win32_const.entry(key, &format!("{:?}",value));
-  // }
-  // let test_key = win32_const["__RPCNDR_H_VERSION__"];
-  // let test_key = "__RPCNDR_H_VERSION__";
-  // println!("Hello, world! libret42{} libadd{} libadd_ext{} libret42_ext{} test_key{}"
-   // ,                      libret42  ,libadd   ,libadd_ext  ,libret42_ext ,test_key);
-
-  // codegen_win32const(); // generates win32const_codegen.rs
-
-  // codegen_win32const_test();
-
-  // match codegen_win32const_db() {
-  //   Ok(())	=> p!("redb crated successfully at {:?}",redb_path),
-  //   Error 	=> p!("redb FAILED to create db at {:?} due to {:?}",redb_path,Error),
-  // }
 }
