@@ -12,12 +12,16 @@ use std::fs  	::File;
 use std::io  	::{BufWriter, Write};
 use std::path	::Path;
 
-pub const win32const_codegen_p	:&str	= "./data/win32const_codegen.rs";
+pub const win32const_codegen_p  	:&str	= "./data/win32const_codegen.rs";
+pub const win32const_codegen_t_p	:&str	= "./data/win32const_codegen_t.rs";
 
 use chrono::prelude::*;
-fn codegen_win32const(src:ConstFrom,src_p:&Path) { // generate win32const_codegen.rs file with hashmap to be embedded
-  let     path	= Path     ::new(win32const_codegen_p);
-  if path.is_file() {p!("skiping existing file ={:?}",&path.as_os_str());return}
+fn codegen_win32const(src:ConstFrom,src_p:&Path,typed:bool) { // generate win32const_codegen.rs file with hashmap to be embedded
+  let     path	= match typed {
+    true  => Path::new(win32const_codegen_t_p),
+    false => Path::new(win32const_codegen_p  ),
+  };
+  if path.is_file() {p!("skipping existing file ={:?}",&path.as_os_str());return}
   p!("Writing to path ‘{:?}’",&path.as_os_str());
   let mut file	= BufWriter::new(File::create(&path).unwrap());
 
@@ -32,11 +36,13 @@ fn codegen_win32const(src:ConstFrom,src_p:&Path) { // generate win32const_codege
   let log_at_count = 10000 ;
   for key_val in const_vec {
     ist += 1;
-    if (ist % log_at_count) == 0 {p!("parsed line # {} @ {}",ist,Utc::now())}
-    let (key,val)	= (key_val.0,key_val.1); //WM_RENDERFORMAT 773
-    phf_win32_const.entry(key, &format!("{:?}",val)); // "quote" manually since values are added literally
+    let (key,val,type_)	= (key_val.0,key_val.1,key_val.2); //WM_RENDERFORMAT 773
+    if (ist % log_at_count) == 0 {p!("parsed line # {} of {}={} @ {}",ist,&key,&val,Utc::now())}
+    if typed	{phf_win32_const.entry(key, &win32const_to_enum_str(&type_,&val));
+    } else  	{phf_win32_const.entry(key, &format!("{:?}",val));} // "quote" manually since values are added literally
   }
-  write!(&mut file, "static win32_const: phf::Map<&'static str, &'static str> = {}", phf_win32_const.build()).unwrap();
+  if typed {write!(&mut file, "static win32_const: phf::Map<&'static str, WinConstVal > = {}", phf_win32_const.build()).unwrap();
+  } else   {write!(&mut file, "static win32_const: phf::Map<&'static str, &'static str> = {}", phf_win32_const.build()).unwrap();};
   write!(&mut file, ";\n").unwrap();
 }
 
