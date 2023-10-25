@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file
 
 [unreleased]: https://github.com/eugenesvk/winAPIconst/compare/0.1.0...HEAD
 ## [Unreleased]
+- __Changed__
+  + Update the source database to use WinMD directly and thus add all the 185k constants 
+
 <!-- - __Added__ -->
   <!-- + :sparkles:  -->
   <!-- new features -->
