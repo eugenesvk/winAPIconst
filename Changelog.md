@@ -1,11 +1,8 @@
 # Changelog
 All notable changes to this project will be documented in this file
 
-[unreleased]: https://github.com/eugenesvk/winAPIconst/compare/0.1.0...HEAD
+[unreleased]: https://github.com/eugenesvk/winAPIconst/compare/0.2.0...HEAD
 ## [Unreleased]
-- __Changed__
-  + Update the source database to use WinMD directly and thus add all the 185k constants 
-
 <!-- - __Added__ -->
   <!-- + :sparkles:  -->
   <!-- new features -->
@@ -24,6 +21,11 @@ All notable changes to this project will be documented in this file
 <!-- - __Security__ -->
   <!-- + :lock:  -->
   <!-- vulnerabilities -->
+
+[0.2.0]: https://github.com/eugenesvk/winAPIconst/releases/tag/0.2.0
+## [0.2.0]
+- __Changed__
+  + Update the source database to use WinMD directly and thus add all the 185k constants 
 
 [0.1.0]: https://github.com/eugenesvk/winAPIconst/releases/tag/0.1.0
 ## [0.1.0]
