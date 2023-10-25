@@ -26,6 +26,23 @@ use chrono::prelude::*;
   I64(i64),U64(u64),F64(f64),
   ISize(isize),
 }
+fn win32const_to_enum_str(type_:&str,val:&str) -> String {
+  let enm = "WinConstVal";
+  let ret = match type_ {
+   "i8" => Some(format!( "{}::I8({})",enm,&val)), "u8" => Some(format!( "{}::U8({})",enm,&val)),
+  "i16" => Some(format!("{}::I16({})",enm,&val)),"u16" => Some(format!("{}::U16({})",enm,&val)),
+  "i32" => Some(format!("{}::I32({})",enm,&val)),"u32" => Some(format!("{}::U32({})",enm,&val)),"f32" => Some(format!("{}::F32({})",enm,&val)),
+  "i64" => Some(format!("{}::I64({})",enm,&val)),"u64" => Some(format!("{}::U64({})",enm,&val)),"f64" => Some(format!("{}::F64({})",enm,&val)),
+  "isize" => Some(format!("{}::ISize({})",enm,&val)),
+  "_" => Some(format!("{}::Struct(\"{}\")",enm,&val)),
+  _ => None,
+  };
+  match ret {
+    Some(s)	=> s,
+    None   	=> {if val.starts_with("[")	{format!("{}::Array(\"{}\")",enm,&val)
+           	   } else                  	{format!("{}::Str(\"{}\")"  ,enm,&val)}},
+  }
+}
 fn codegen_win32const(src:ConstFrom,src_p:&Path,typed:bool) { // generate win32const_codegen.rs file with hashmap to be embedded
   let     path	= match typed {
     true  => Path::new(win32const_codegen_t_p),
