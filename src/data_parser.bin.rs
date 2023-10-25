@@ -16,6 +16,16 @@ pub const win32const_codegen_p  	:&str	= "./data/win32const_codegen.rs";
 pub const win32const_codegen_t_p	:&str	= "./data/win32const_codegen_t.rs";
 
 use chrono::prelude::*;
+#[derive(Debug)] pub enum WinConstVal {
+  Str   (&'static str),
+  Array (&'static str), // [1,2,3,]
+  Struct(&'static str), //_
+   I8( i8), U8( u8),
+  I16(i16),U16(u16),
+  I32(i32),U32(u32),F32(f32),
+  I64(i64),U64(u64),F64(f64),
+  ISize(isize),
+}
 fn codegen_win32const(src:ConstFrom,src_p:&Path,typed:bool) { // generate win32const_codegen.rs file with hashmap to be embedded
   let     path	= match typed {
     true  => Path::new(win32const_codegen_t_p),
