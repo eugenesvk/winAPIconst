@@ -146,7 +146,11 @@ fn main() {
   if        let Some(pos) = args.iter().position(|x| *x == "ziggle_clean") {
     ziggle_clean(); // generate a cleaned up key/value (from value/key) database
   } else if let Some(pos) = args.iter().position(|x| *x == "gen_winmd") {
-    codegen_win32const(ConstFrom::WinMD,&c_win_md); // 1 WinMD → win32const_codegen.rs (embed)
+    let typed = false;
+    codegen_win32const(ConstFrom::WinMD,&c_win_md,typed); // 1 WinMD → win32const_codegen.rs (embed)
+  } else if let Some(pos) = args.iter().position(|x| *x == "gen_winmd_t") {
+    let typed = true;
+    codegen_win32const(ConstFrom::WinMD,&c_win_md,typed); // 1b WinMD → win32const_codegen.rs (typed embed)
   } else if let Some(pos) = args.iter().position(|x| *x == "rkyv_save_winmd") {
     win32const_save_rkyv_mmap(ConstFrom::WinMD,&c_win_md); // 2 WinMD → rkyv file (mmap)
   } else if let Some(pos) = args.iter().position(|x| *x == "rkyv_save_ziggle") {
@@ -165,7 +169,8 @@ fn main() {
      // ,                      libret42  ,libadd   ,libadd_ext  ,libret42_ext ,test_key);
   } else if let Some(pos) = args.iter().position(|x| *x == "gen_ziggle") {
     let db_p:&Path	= Path::new("");
-    codegen_win32const(ConstFrom::Ziggle,&db_p); // generates win32const_codegen.rs
+    let typed = false;
+    codegen_win32const(ConstFrom::Ziggle,&db_p,typed); // generates win32const_codegen.rs
   } else if let Some(pos) = args.iter().position(|x| *x == "gen_test") {
     codegen_win32const_test();
   } else if let Some(pos) = args.iter().position(|x| *x == "gen_db") {
