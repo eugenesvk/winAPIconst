@@ -63,9 +63,9 @@ use std::collections::HashSet;
 use chrono::prelude::*;
 use aho_corasick::{AhoCorasick, PatternID};
 
-pub fn parse_ziggle_vec() -> Result<Vec<(String,String)>,Box<dyn std::error::Error>> { // for rkyv ArchiveHashmap which doesn't benefit from HashMap, but uses an extension to convert Vector to ArchiveHashmap
-  let mut win32_const:Vec<(String,String)>	= Vec::with_capacity(200_000 * 2);
-  let mut all_keys   :HashSet<String>     	= HashSet::new(); // for checking dupes, though dupes removed during cleanup, some might appear again after replacements, especially given that some constants have the same name differing only by CaSe
+pub fn parse_ziggle_vec() -> Result<Vec<(String,String,String)>,Box<dyn std::error::Error>> { // for rkyv ArchiveHashmap which doesn't benefit from HashMap, but uses an extension to convert Vector to ArchiveHashmap
+  let mut win32_const:Vec<(String,String,String)>	= Vec::with_capacity(200_000 * 2);
+  let mut all_keys   :HashSet<String>            	= HashSet::new(); // for checking dupes, though dupes removed during cleanup, some might appear again after replacements, especially given that some constants have the same name differing only by CaSe
     // IID_IXMLDOMImplementation
     // IID_IXmlDomImplementation
 
@@ -85,6 +85,7 @@ pub fn parse_ziggle_vec() -> Result<Vec<(String,String)>,Box<dyn std::error::Err
   file_log_buff.write(nl).unwrap();
 
   let mut is_data_start	= false;
+  let type_ ="".to_string();
   if let Ok(lines) = read_lines(path_clean) {
     for line_maybe in lines { // consumes iterator, returns an (Optional) String
       ist += 1;
@@ -102,7 +103,7 @@ pub fn parse_ziggle_vec() -> Result<Vec<(String,String)>,Box<dyn std::error::Err
               buff_write_kv(&mut file_log_buff, &key, &val);
             } else {
               all_keys   .insert( k.clone());
-              win32_const.push  ((k        ,val.clone()));
+              win32_const.push  ((k        ,val.clone(),type_.clone()));
             }
           }
         }
@@ -117,11 +118,12 @@ pub fn parse_ziggle_vec() -> Result<Vec<(String,String)>,Box<dyn std::error::Err
 
 pub const col_name_nm     	:&str	= "name";
 pub const col_value_nm    	:&str	= "value";
+pub const col_type_prim_nm	:&str	= "typeprimitive";
 pub const col_namespace_nm	:&str	= "namespace";
 
-pub fn convert_const_csv2vec(src:&Path) -> Result<Vec<(String,String)>,Box<dyn Error>> { // for rkyv ArchiveHashmap which doesn't benefit from HashMap, but uses an extension to convert Vector to ArchiveHashmap
-  let mut win32_const:Vec<(String,String)>	= Vec::with_capacity(200_000);
-  let mut all_keys   :HashSet<String>     	= HashSet::new(); // for checking dupes, though dupes removed during cleanup, some might appear again after replacements, especially given that some constants have the same name differing only by CaSe
+pub fn convert_const_csv2vec(src:&Path) -> Result<Vec<(String,String,String)>,Box<dyn Error>> { // for rkyv ArchiveHashmap which doesn't benefit from HashMap, but uses an extension to convert Vector to ArchiveHashmap
+  let mut win32_const:Vec<(String,String,String)>	= Vec::with_capacity(200_000);
+  let mut all_keys   :HashSet<String>            	= HashSet::new(); // for checking dupes, though dupes removed during cleanup, some might appear again after replacements, especially given that some constants have the same name differing only by CaSe
     // IID_IXMLDOMImplementation
     // IID_IXmlDomImplementation
 
@@ -133,6 +135,7 @@ pub fn convert_const_csv2vec(src:&Path) -> Result<Vec<(String,String)>,Box<dyn E
   let hd = rdr.headers()?.clone();
   let col_name_i      	= hd.iter().position(|x| x.to_ascii_lowercase() == col_name_nm     ).unwrap();
   let col_value_i     	= hd.iter().position(|x| x.to_ascii_lowercase() == col_value_nm    ).unwrap();
+  let col_type_prim_i 	= hd.iter().position(|x| x.to_ascii_lowercase() == col_type_prim_nm).unwrap();
   let col_namespace_i_	= hd.iter().position(|x| x.to_ascii_lowercase() == col_namespace_nm);
   use unescaper::unescape; // required since strings are escaped
 
@@ -146,16 +149,16 @@ pub fn convert_const_csv2vec(src:&Path) -> Result<Vec<(String,String)>,Box<dyn E
   for (i, res) in rdr.records().enumerate() {
     if (i % log_at_count) == 0 {p!("status report: read line # {} @ {}",i,Utc::now())}
     let record = res?;
-    let (key,val)	= (record[col_name_i ].to_string(),unescape(&record[col_value_i])?); //WM_RENDERFORMAT 773
-    let mut keys 	= vec![key.clone()]; // push original WM_RENDERFORMAT
-    let key_upd  	= repl_ac.replace_all(&key,repl_with).to_ascii_lowercase();
-    if key_upd   	!= key {keys.push(key_upd);} // push lowercased sub ‘wm renderformat’
+    let (key,val,type_prim) = (record[col_name_i ].to_string(),unescape(&record[col_value_i])?,record[col_type_prim_i].to_string()); //WM_RENDERFORMAT 773
+    let mut keys	= vec![key.clone()]; // push original WM_RENDERFORMAT
+    let key_upd 	= repl_ac.replace_all(&key,repl_with).to_ascii_lowercase();
+    if key_upd  	!= key {keys.push(key_upd);} // push lowercased sub ‘wm renderformat’
     for k in keys { // input data should have no dupes, but replacements here may generate new ones
       if all_keys.contains(&k) { // skip dupes and log
         buff_write_kv(&mut file_log_buff, &key, &val);
       } else {
         all_keys   .insert( k.clone());
-        win32_const.push  ((k        ,val.clone()));
+        win32_const.push  ((k        ,val.clone(),type_prim.clone()));
       }
     }
   }
