@@ -151,7 +151,11 @@ pub fn win32const_save_rkyv_mmap(src:ConstFrom,src_p:&Path) { // Write
     ConstFrom::Ziggle	=> parse_ziggle_vec()           .unwrap(),
     ConstFrom::WinMD 	=> convert_const_csv2vec(&src_p).unwrap(),
   };
-  let data	= Win32const{hash_map_vec:const_vec};
+  let mut const_vec_kv:Vec<(String,String)>	= Vec::with_capacity(200_000);
+  for (k,v,t) in const_vec { // remove type
+    const_vec_kv.push((k,v))
+  };
+  let data	= Win32const{hash_map_vec:const_vec_kv};
   p!("Starting writing data to an mmaped file...");
   let mut synchronizer = Synchronizer::new(MMAP_PATH.as_ref()); // Initialize the Synchronizer
   let (written, reset) = synchronizer.write(&data, Duration::from_secs(1)).expect("failed to write data");
