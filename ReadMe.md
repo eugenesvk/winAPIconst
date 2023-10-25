@@ -11,7 +11,7 @@ AutoHotkey example included
 
 ## Introduction
 
-The DLL includes ~170k Windows API constants and a function to look them up by name so instead of 
+The DLL includes ~185k Windows API constants and a function to look them up by name so instead of 
 
   - `CLSID_ActiveDesktop := "{75048700-EF1F-11D0-9888-006097DEACF9}"` you can use
   - `CLSID_ActiveDesktop	:= cCLS('ActiveDesktop')`
